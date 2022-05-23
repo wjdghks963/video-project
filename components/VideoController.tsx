@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const VideoController = ({ videoRef, videoBoxRef, currentTime }) => {
-  const videoDuration = videoRef.current && videoRef.current?.duration;
+interface Props {
+  videoRef: React.RefObject<HTMLVideoElement>;
+  videoBoxRef: React.RefObject<HTMLDivElement>;
+  currentTime: number | undefined;
+}
+
+const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
+  const videoDuration: number = videoRef.current!.duration;
 
   const totalTime = (videoTime: number) => {
     let min = Math.floor(videoTime / 60);
@@ -23,19 +29,21 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }) => {
           step="1"
           max={videoDuration}
           value={videoRef.current?.currentTime}
-          onChange={(e) => (videoRef.current.currentTime = e.target.value)}
+          onChange={(e) =>
+            (videoRef.current!.currentTime = Number(e.target.value))
+          }
         />
         <Time>
-          <span>{totalTime(currentTime)} </span>
+          <span>{totalTime(currentTime as number)} </span>
           <span>{totalTime(videoDuration)}</span>
         </Time>
       </ProgressBox>
       <VolumeBtn>
         <svg
           onClick={() =>
-            videoRef.current.muted
-              ? (videoRef.current.muted = false)
-              : (videoRef.current.muted = true)
+            videoRef.current!.muted
+              ? (videoRef.current!.muted = false)
+              : (videoRef.current!.muted = true)
           }
           className="w-10 h-10"
           fill="none"
@@ -74,13 +82,15 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }) => {
             type="range"
             step="0.1"
             max="1"
-            value={videoRef.current && videoRef.current.volume}
-            onChange={(e) => (videoRef.current.volume = e.target.value)}
+            value={videoRef.current!.volume}
+            onChange={(e) =>
+              (videoRef.current!.volume = Number(e.target.value))
+            }
           />
         </div>
       </VolumeBtn>
 
-      <FullScreenBtn onClick={() => videoRef.current.requestFullscreen()}>
+      <FullScreenBtn onClick={() => videoRef.current!.requestFullscreen()}>
         <svg
           className="w-6 h-6"
           fill="none"

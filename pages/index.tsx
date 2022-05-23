@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useEffect, useState, useRef, MouseEventHandler } from "react";
+import { useEffect, useState, useRef, KeyboardEvent } from "react";
 import styled from "styled-components";
 import VideoController from "../components/VideoController";
 
@@ -14,15 +14,15 @@ const Home: NextPage = () => {
       ? videoRef.current.play()
       : videoRef.current?.pause();
 
-  const keyDownFn = (event) => {
+  const keyDownFn = (event: KeyboardEvent<HTMLDivElement>) => {
     console.log(event.code);
     switch (event.code) {
       case "ArrowRight": {
-        videoRef.current.currentTime += 5;
+        videoRef.current!.currentTime += 5;
         break;
       }
       case "ArrowLeft": {
-        videoRef.current.currentTime -= 5;
+        videoRef.current!.currentTime -= 5;
         break;
       }
       case "Space": {
