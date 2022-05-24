@@ -8,7 +8,7 @@ interface Props {
 }
 
 const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
-  const videoDuration: number = videoRef.current!.duration;
+  const videoDuration = videoRef.current && videoRef.current?.duration;
 
   const totalTime = (videoTime: number) => {
     let min = Math.floor(videoTime / 60);
@@ -27,15 +27,15 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
         <ProgressBar
           type="range"
           step="1"
-          max={videoDuration}
-          value={videoRef.current?.currentTime}
+          max={`${videoDuration}`}
+          value={videoRef.current?.currentTime || ""}
           onChange={(e) =>
             (videoRef.current!.currentTime = Number(e.target.value))
           }
         />
         <Time>
           <span>{totalTime(currentTime as number)} </span>
-          <span>{totalTime(videoDuration)}</span>
+          <span>{totalTime(videoDuration as number)}</span>
         </Time>
       </ProgressBox>
       <VolumeBtn>
@@ -52,13 +52,6 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
           xmlns="http://www.w3.org/2000/svg"
         >
           {videoRef.current && videoRef.current.muted ? (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1"
-              d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-            ></path>
-          ) : (
             <>
               <path
                 strokeLinecap="round"
@@ -74,6 +67,13 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
                 d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
               ></path>
             </>
+          ) : (
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1"
+              d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+            ></path>
           )}
         </svg>
 
@@ -82,7 +82,7 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
             type="range"
             step="0.1"
             max="1"
-            value={videoRef.current!.volume}
+            value={videoRef.current?.volume || ""}
             onChange={(e) =>
               (videoRef.current!.volume = Number(e.target.value))
             }
@@ -113,7 +113,7 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
 const Wrapper = styled.div`
   display: flex;
   position: absolute;
-  bottom: 20px;
+  bottom: 5px;
   width: 100%;
   opacity: 0;
   justify-content: space-between;
