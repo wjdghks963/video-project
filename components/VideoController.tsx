@@ -1,13 +1,19 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-interface Props {
+interface VideoControllerProps {
   videoRef: React.RefObject<HTMLVideoElement>;
   videoBoxRef: React.RefObject<HTMLDivElement>;
-  currentTime: number | undefined;
 }
 
-const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
+const VideoController = ({ videoRef, videoBoxRef }: VideoControllerProps) => {
+  const [rotate, setRotate] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [opacity, setOpacity] = useState<number>(0);
+  const [currnetTime, setCurrentTime] = useState<number | null>(0);
   const videoDuration = videoRef.current && videoRef.current?.duration;
 
   const totalTime = (videoTime: number) => {
@@ -21,20 +27,49 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
     }`;
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => setOpacity(0), 3000);
+    return () => clearTimeout(timer);
+  }, [rotate]);
+
+  const rotateFunc = (event: MouseEvent) => {
+    setRotate({ x: event.screenX, y: event.screenY });
+    setOpacity(1);
+  };
+
+  const getCurrentTime = () => {
+    setCurrentTime(videoRef.current && videoRef.current.currentTime);
+  };
+
+  useEffect(() => {
+    const videoBox = videoBoxRef.current;
+    const video = videoRef.current;
+    videoBox?.addEventListener("mousemove", (event) => rotateFunc(event));
+
+    if (opacity === 1) {
+      video?.addEventListener("timeupdate", getCurrentTime);
+    }
+    return () => {
+      video?.removeEventListener("timeupdate", getCurrentTime);
+      videoBox?.removeEventListener("mousemove", (event) => rotateFunc(event));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opacity, rotate]);
+
   return (
-    <Wrapper>
+    <Wrapper opacity={opacity}>
       <ProgressBox>
         <ProgressBar
           type="range"
           step="1"
           max={`${videoDuration}`}
-          value={videoRef.current?.currentTime || ""}
+          value={videoRef.current?.currentTime || 0}
           onChange={(e) =>
             (videoRef.current!.currentTime = Number(e.target.value))
           }
         />
         <Time>
-          <span>{totalTime(currentTime as number)} </span>
+          <span>{totalTime(currnetTime as number)} </span>
           <span>{totalTime(videoDuration as number)}</span>
         </Time>
       </ProgressBox>
@@ -82,7 +117,7 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
             type="range"
             step="0.1"
             max="1"
-            value={videoRef.current?.volume || ""}
+            value={videoRef.current?.volume || 0}
             onChange={(e) =>
               (videoRef.current!.volume = Number(e.target.value))
             }
@@ -90,7 +125,7 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
         </div>
       </VolumeBtn>
 
-      <FullScreenBtn onClick={() => videoRef.current!.requestFullscreen()}>
+      <FullScreenBtn onClick={() => videoBoxRef.current!.requestFullscreen()}>
         <svg
           className="w-6 h-6"
           fill="none"
@@ -110,15 +145,15 @@ const VideoController = ({ videoRef, videoBoxRef, currentTime }: Props) => {
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ opacity: number }>`
   display: flex;
   position: absolute;
   bottom: 5px;
   width: 100%;
-  opacity: 0;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(${(props) => props.theme.lightblackBg});
   padding: 10px 0;
+  opacity: ${(props) => props.opacity};
 `;
 
 const ProgressBox = styled.div`
@@ -153,8 +188,11 @@ const VolumeBtn = styled.div`
       display: block;
       position: absolute;
       transform: rotate(-90deg);
-      right: -50px;
-      top: -75px;
+      right: -60px;
+      top: -90px;
+      padding: 10px;
+      background-color: rgba(${(props) => props.theme.lightblackBg});
+      border-radius: 10px;
     }
   }
 `;
