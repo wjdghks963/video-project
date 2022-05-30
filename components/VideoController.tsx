@@ -1,19 +1,34 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { commercial } from "../assets/videos";
 
 interface VideoControllerProps {
   videoRef: React.RefObject<HTMLVideoElement>;
   videoBoxRef: React.RefObject<HTMLDivElement>;
 }
 
-const VideoController = ({ videoRef, videoBoxRef }: VideoControllerProps) => {
+// eslint-disable-next-line react/display-name
+const VideoController = forwardRef((props: VideoControllerProps, ref) => {
+  useImperativeHandle(ref, () => ImperativeObj);
+
+  const ImperativeObj = {
+    rotateFunc: (event: MouseEvent) => {
+      setRotate({ x: event.screenX, y: event.screenY });
+      setOpacity(1);
+    },
+    getCurrentTime: () =>
+      setCurrentTime(videoRef.current && videoRef.current?.currentTime),
+  };
+
   const [rotate, setRotate] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
   const [opacity, setOpacity] = useState<number>(0);
   const [currnetTime, setCurrentTime] = useState<number | null>(0);
+
+  const { videoRef, videoBoxRef } = props;
   const videoDuration = videoRef.current && videoRef.current?.duration;
 
   const totalTime = (videoTime: number) => {
@@ -67,12 +82,18 @@ const VideoController = ({ videoRef, videoBoxRef }: VideoControllerProps) => {
           onChange={(e) =>
             (videoRef.current!.currentTime = Number(e.target.value))
           }
+          disabled={
+            props.videoRef.current && props.videoRef.current!.src === commercial
+              ? true
+              : false
+          }
         />
         <Time>
           <span>{totalTime(currnetTime as number)} </span>
           <span>{totalTime(videoDuration as number)}</span>
         </Time>
       </ProgressBox>
+
       <VolumeBtn>
         <svg
           onClick={() =>
@@ -143,7 +164,7 @@ const VideoController = ({ videoRef, videoBoxRef }: VideoControllerProps) => {
       </FullScreenBtn>
     </Wrapper>
   );
-};
+});
 
 const Wrapper = styled.div<{ opacity: number }>`
   display: flex;
@@ -159,7 +180,7 @@ const Wrapper = styled.div<{ opacity: number }>`
 const ProgressBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 80%;
   margin-left: 10px;
 `;
 
@@ -177,9 +198,11 @@ const VolumeBtn = styled.div`
   color: white;
   width: 30px;
   display: flex;
+  justify-content: center;
   align-items: center;
   position: relative;
   height: 100%;
+  padding: 10px 0;
   div {
     display: none;
   }
@@ -197,13 +220,29 @@ const VolumeBtn = styled.div`
   }
 `;
 
+const SpeedBtn = styled.div`
+  display: flex;
+  color: white;
+  padding: 0 10px;
+  align-items: center;
+  border: 1px solid white;
+  border-radius: 5px;
+  div {
+    padding: 5px;
+  }
+  span {
+    cursor: pointer;
+    font-weight: 900;
+  }
+`;
+
 const FullScreenBtn = styled.div`
   display: flex;
   width: 30px;
   color: white;
   margin-right: 25px;
   height: 100%;
-  margin-top: 2px;
+  margin-top: 10px;
 `;
 
 export default VideoController;
