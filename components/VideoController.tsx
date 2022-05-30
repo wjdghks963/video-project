@@ -56,6 +56,28 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
     setCurrentTime(videoRef.current && videoRef.current.currentTime);
   };
 
+  const controllPlaySpeed = (event: React.MouseEvent) => {
+    const video = document.querySelector("#video") as HTMLVideoElement;
+    switch (event.currentTarget.id) {
+      case "fast": {
+        if (1 <= video.playbackRate && video.playbackRate < 4) {
+          video.playbackRate++;
+        } else if (video.playbackRate < 1) {
+          video.playbackRate += 0.2;
+        }
+        break;
+      }
+      case "slow": {
+        if (video.playbackRate <= 1 && video.playbackRate >= 0.3) {
+          video.playbackRate -= 0.2;
+        } else if (video.playbackRate > 1) {
+          video.playbackRate -= 1;
+        }
+        break;
+      }
+    }
+  };
+
   useEffect(() => {
     const videoBox = videoBoxRef.current;
     const video = videoRef.current;
@@ -93,7 +115,15 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
           <span>{totalTime(videoDuration as number)}</span>
         </Time>
       </ProgressBox>
-
+      <SpeedBtn>
+        <span id="slow" onClick={(event) => controllPlaySpeed(event)}>
+          &lt;&lt;
+        </span>
+        <div>{videoRef.current?.playbackRate.toFixed(1)}</div>
+        <span id="fast" onClick={(event) => controllPlaySpeed(event)}>
+          &gt;&gt;
+        </span>
+      </SpeedBtn>
       <VolumeBtn>
         <svg
           onClick={() =>
