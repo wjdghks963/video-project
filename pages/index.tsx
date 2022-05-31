@@ -104,7 +104,6 @@ const Home: NextPage = () => {
           detectCommercialTime();
           controllerRef.current!.getCurrentTime();
         }}
-        src={video}
       />
 
       <VideoController
