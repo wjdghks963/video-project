@@ -78,6 +78,12 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
     }
   };
 
+  const conttollScreen = () => {
+    document.fullscreenElement
+      ? videoBoxRef.current!.requestFullscreen()
+      : document.exitFullscreen();
+  };
+
   useEffect(() => {
     const videoBox = videoBoxRef.current;
     const video = videoRef.current;
@@ -176,7 +182,11 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
         </div>
       </VolumeBtn>
 
-      <FullScreenBtn onClick={() => videoBoxRef.current!.requestFullscreen()}>
+      <FullScreenBtn
+        onClick={() => {
+          conttollScreen();
+        }}
+      >
         <svg
           className="w-6 h-6"
           fill="none"
