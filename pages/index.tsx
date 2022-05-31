@@ -2,6 +2,7 @@ import Hls from "hls.js";
 import type { NextPage } from "next";
 import React, { useState, useRef, KeyboardEvent, useEffect } from "react";
 import styled from "styled-components";
+import { video, commercial } from "../assets/videos";
 import Loading from "../components/Loading";
 import VideoController from "../components/VideoController";
 
@@ -9,10 +10,6 @@ interface controllerRef {
   rotateFunc: (event: React.MouseEvent) => void;
   getCurrentTime: () => void;
 }
-const video =
-  "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8";
-const commercial =
-  "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
 
 const Home: NextPage = () => {
   const [videoObj, setVideoObj] = useState<{
@@ -49,6 +46,9 @@ const Home: NextPage = () => {
       }
     }
   };
+
+  //  *처음 m3u8재생 & 광고할 시간 확인* hls.js 사용
+
   let hls: Hls;
 
   const detectCommercialTime = () => {

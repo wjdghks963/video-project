@@ -57,21 +57,21 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
   };
 
   const controllPlaySpeed = (event: React.MouseEvent) => {
-    const video = document.querySelector("#video") as HTMLVideoElement;
+    const videoSpeed = videoRef.current!.playbackRate;
     switch (event.currentTarget.id) {
       case "fast": {
-        if (1 <= video.playbackRate && video.playbackRate < 4) {
-          video.playbackRate++;
-        } else if (video.playbackRate < 1) {
-          video.playbackRate += 0.2;
+        if (1 <= videoSpeed && videoSpeed < 4) {
+          videoRef.current!.playbackRate++;
+        } else if (videoSpeed < 1) {
+          videoRef.current!.playbackRate += 0.2;
         }
         break;
       }
       case "slow": {
-        if (video.playbackRate <= 1 && video.playbackRate >= 0.3) {
-          video.playbackRate -= 0.2;
-        } else if (video.playbackRate > 1) {
-          video.playbackRate -= 1;
+        if (videoSpeed <= 1 && videoSpeed >= 0.3) {
+          videoRef.current!.playbackRate -= 0.2;
+        } else if (videoSpeed > 1) {
+          videoRef.current!.playbackRate -= 1;
         }
         break;
       }
@@ -119,7 +119,7 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
         <span id="slow" onClick={(event) => controllPlaySpeed(event)}>
           &lt;&lt;
         </span>
-        <div>{videoRef.current?.playbackRate.toFixed(1)}</div>
+        <p>{videoRef.current?.playbackRate.toFixed(1)}</p>
         <span id="fast" onClick={(event) => controllPlaySpeed(event)}>
           &gt;&gt;
         </span>
@@ -254,10 +254,11 @@ const SpeedBtn = styled.div`
   display: flex;
   color: white;
   padding: 0 10px;
+  margin: 5px 0;
   align-items: center;
   border: 1px solid white;
   border-radius: 5px;
-  div {
+  p {
     padding: 5px;
   }
   span {
