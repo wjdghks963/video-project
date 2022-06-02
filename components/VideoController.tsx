@@ -84,21 +84,6 @@ const VideoController = forwardRef((props: VideoControllerProps, ref) => {
       : document.exitFullscreen();
   };
 
-  useEffect(() => {
-    const videoBox = videoBoxRef.current;
-    const video = videoRef.current;
-    videoBox?.addEventListener("mousemove", (event) => rotateFunc(event));
-
-    if (opacity === 1) {
-      video?.addEventListener("timeupdate", getCurrentTime);
-    }
-    return () => {
-      video?.removeEventListener("timeupdate", getCurrentTime);
-      videoBox?.removeEventListener("mousemove", (event) => rotateFunc(event));
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opacity, rotate]);
-
   return (
     <Wrapper opacity={opacity}>
       <ProgressBox>

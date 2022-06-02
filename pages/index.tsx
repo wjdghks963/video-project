@@ -86,8 +86,6 @@ const Home: NextPage = () => {
     hls.attachMedia(videoSelector);
   }, []);
 
-  console.log("re-rendering");
-
   return (
     <Wrapper
       ref={videoBoxRef}
